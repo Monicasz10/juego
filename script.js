@@ -15,21 +15,21 @@ const tiroSound = document.getElementById("tiro-sound");
 
 // 🎨 IMÁGENES DEL JUEGO
 const canchas = [
-  "imagenes/canchaa.png",
-  "imagenes/estadio2.png",
-  "imagenes/estadio3.png",
-  "imagenes/estadio4.png",
-  "imagenes/estadio5.png",
+  "canchaa.png",
+  "estadio2.png",
+  "estadio3.png",
+  "estadio4.png",
+  "estadio5.png",
 ];
 
 let fondo = new Image();
 fondo.src = canchas[0];
 
 const jugadorImg = new Image();
-jugadorImg.src = "imagenes/jugadorr.webp";
+jugadorImg.src = "jugadorr.webp";
 
 const impresoraImg = new Image();
-impresoraImg.src = "imagenes/impresoraa.webp";
+impresoraImg.src = "impresoraa.webp";
 
 // ⚙️ VARIABLES DEL JUEGO
 let jugador = { x: 100, y: 200, width: 120, height: 120, speed: 8 };
@@ -334,3 +334,4 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnRight) btnRight.addEventListener("mousedown", moverDerecha);
   if (btnShoot) btnShoot.addEventListener("mousedown", disparar);
 });
+
