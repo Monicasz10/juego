@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fútbol con Impresoras y Preguntas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Pantalla de inicio -->
+  <div id="pantalla-inicio">
+    <h1>⚽ Fútbol con Impresoras 🖨️</h1>
+    <p>Demuestra tus reflejos... ¡y tus conocimientos!</p>
+    <button id="btn-iniciar">Iniciar Juego</button>
+  </div>
+
+  <!-- Pantalla del juego -->
+  <div id="pantalla-juego" class="oculto">
+    <canvas id="juego" width="800" height="500"></canvas>
+
+    <!-- 🔹 Aquí se muestra puntaje, nivel y vidas -->
+    <div id="puntaje">Goles impresos: 0 | Nivel: 1 | ❤️ Vidas: 3</div>
+
+    <!-- 🎮 Controles visuales -->
+    <div id="controles-juego">
+      <div class="control-flechas">
+        <div class="flecha arriba">▲</div>
+        <div class="fila">
+          <div class="flecha izquierda">◀</div>
+          <div class="flecha derecha">▶</div>
+        </div>
+        <div class="flecha abajo">▼</div>
+      </div>
+      <div class="boton-space">SPACE</div>
+    </div>
+
+    <!-- Contenedor de preguntas -->
+    <div id="pregunta-box" class="oculto">
+      <p id="pregunta-text"></p>
+      <input type="text" id="respuesta-input" placeholder="Escribe tu respuesta">
+      <button id="responder-btn">Responder</button>
+    </div>
+
+    <!-- Sonidos -->
+    <audio id="gol-sound" src="https://freesound.org/data/previews/522/522327_10715746-lq.mp3"></audio>
+    <audio id="tiro-sound" src="https://freesound.org/data/previews/186/186942_3205806-lq.mp3"></audio>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
