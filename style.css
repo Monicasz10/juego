@@ -9,7 +9,7 @@ body {
 
   /* Fondo con degradado verde y tu imagen */
   background: linear-gradient(rgba(0, 128, 0, 0.4), rgba(0, 128, 0, 0.6)),
-              url('imagenes/fondoo.png');
+              url("imagenes/fondoo.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -174,3 +174,4 @@ canvas {
   background: rgba(0, 255, 255, 0.1);
   transform: scale(1.1);
 }
+
