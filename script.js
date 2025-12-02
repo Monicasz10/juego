@@ -4,15 +4,6 @@ const pantallaInicio = document.getElementById("pantalla-inicio");
 const pantallaJuego = document.getElementById("pantalla-juego");
 const canvas = document.getElementById("juego");
 const ctx = canvas.getContext("2d");
-// 📱 HACER EL CANVAS RESPONSIVO SIN CAMBIAR EL JUEGO
-function ajustarCanvas() {
-  const scale = Math.min(window.innerWidth / 900, window.innerHeight / 500);
-  canvas.style.transform = `scale(${scale})`;
-  canvas.style.transformOrigin = "top center";
-}
-window.addEventListener("resize", ajustarCanvas);
-ajustarCanvas(); // ejecuta al entrar
-
 const puntajeDiv = document.getElementById("puntaje");
 const preguntaBox = document.getElementById("pregunta-box");
 const preguntaText = document.getElementById("pregunta-text");
