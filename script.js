@@ -4,12 +4,21 @@ const pantallaInicio = document.getElementById("pantalla-inicio");
 const pantallaJuego = document.getElementById("pantalla-juego");
 const canvas = document.getElementById("juego");
 const ctx = canvas.getContext("2d");
+// --- RESPONSIVIDAD REAL DEL CANVAS ---
+function ajustarResolucion() {
+    const scale = canvas.clientWidth / canvas.width;
+
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+}
+
+window.addEventListener("resize", ajustarResolucion);
+setTimeout(ajustarResolucion, 200);
+
 const puntajeDiv = document.getElementById("puntaje");
 const preguntaBox = document.getElementById("pregunta-box");
 const preguntaText = document.getElementById("pregunta-text");
 const respuestaInput = document.getElementById("respuesta-input");
 const responderBtn = document.getElementById("responder-btn");
-
 const golSound = document.getElementById("gol-sound");
 const tiroSound = document.getElementById("tiro-sound");
 
