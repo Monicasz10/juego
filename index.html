@@ -2,9 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Fútbol con Impresoras y Preguntas</title>
+
+  <!-- Fuente retro -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,14 +23,15 @@
   <!-- Pantalla del juego -->
   <div id="pantalla-juego" class="oculto">
 
-    <!-- CANVAS RESPONSIVO -->
+    <!-- Canvas responsivo -->
     <div id="canvas-container">
       <canvas id="juego"></canvas>
     </div>
 
+    <!-- Puntaje -->
     <div id="puntaje">Goles impresos: 0 | Nivel: 1 | ❤️ Vidas: 3</div>
 
-    <!-- 🎮 Controles -->
+    <!-- CONTROLES EN MÓVIL -->
     <div id="controles-juego">
       <div class="control-flechas">
         <div class="flecha arriba">▲</div>
@@ -46,12 +51,12 @@
       <button id="responder-btn">Responder</button>
     </div>
 
+    <!-- Sonidos -->
     <audio id="gol-sound" src="https://freesound.org/data/previews/522/522327_10715746-lq.mp3"></audio>
     <audio id="tiro-sound" src="https://freesound.org/data/previews/186/186942_3205806-lq.mp3"></audio>
   </div>
 
+  <!-- Script del juego -->
   <script src="script.js"></script>
 </body>
 </html>
-
-
