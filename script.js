@@ -4,15 +4,24 @@ const pantallaInicio = document.getElementById("pantalla-inicio");
 const pantallaJuego = document.getElementById("pantalla-juego");
 const canvas = document.getElementById("juego");
 const ctx = canvas.getContext("2d");
-// --- RESPONSIVIDAD REAL DEL CANVAS ---
-function ajustarResolucion() {
-    const scale = canvas.clientWidth / canvas.width;
 
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+// --- CANVAS RESPONSIVO REAL ---
+function ajustarResolucion() {
+    const container = document.getElementById("canvas-container");
+    const width = container.clientWidth;
+
+    // Mantener proporción
+    canvas.width = width;
+    canvas.height = width * 0.55;
+
+    // Evitar que el jugador salga de la pantalla al ajustar
+    jugador.x = Math.min(jugador.x, canvas.width - jugador.width);
+    jugador.y = Math.min(jugador.y, canvas.height - jugador.height);
 }
 
 window.addEventListener("resize", ajustarResolucion);
-setTimeout(ajustarResolucion, 200);
+window.addEventListener("orientationchange", ajustarResolucion);
+setTimeout(ajustarResolucion, 300);
 
 const puntajeDiv = document.getElementById("puntaje");
 const preguntaBox = document.getElementById("pregunta-box");
@@ -42,7 +51,7 @@ impresoraImg.src = "impresoraa.webp";
 
 // ⚙️ VARIABLES DEL JUEGO
 let jugador = { x: 100, y: 200, width: 120, height: 120, speed: 8 };
-let impresora = { x: 700, y: 200, width: 100, height: 100, dy: 4 }; // velocidad base estable
+let impresora = { x: 700, y: 200, width: 100, height: 100, dy: 4 };
 let balon = { x: 180, y: 230, radius: 15, dx: 0, enMovimiento: false };
 
 let goles = 0;
@@ -85,12 +94,13 @@ function iniciarJuego() {
   jugador.y = 200;
 
   impresora.y = 200;
-  impresora.dy = 4; // velocidad inicial FIXED
+  impresora.dy = 4;
 
   jugador.speed = 8;
   balon.enMovimiento = false;
 
   fondo.src = canchas[0];
+  ajustarResolucion();
   loop();
 }
 
@@ -112,11 +122,7 @@ document.addEventListener("keydown", (e) => {
       jugador.x = Math.min(canvas.width - jugador.width, jugador.x + jugador.speed);
       break;
     case " ":
-      if (!balon.enMovimiento) {
-        tiroSound.play();
-        balon.enMovimiento = true;
-        balon.dx = 7 + (nivel - 1) * 2;
-      }
+      disparar();
       break;
   }
 });
@@ -138,13 +144,12 @@ function actualizar() {
     balon.x += balon.dx;
   }
 
-  // Movimiento de impresora
   impresora.y += impresora.dy;
   if (impresora.y <= 0 || impresora.y + impresora.height >= canvas.height) {
     impresora.dy *= -1;
   }
 
-  // Detectar gol
+  // Gol
   if (
     balon.x + balon.radius >= impresora.x &&
     balon.y > impresora.y &&
@@ -164,19 +169,14 @@ function actualizar() {
     if (vidas <= 0) mostrarGameOver();
   }
 
-  // Marcador reducido
+  // Marcador
   puntajeDiv.innerHTML = `
     <div style="
-      display: inline-block;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 8px 12px;
-      border: 2px solid #00ffcc;
-      border-radius: 10px;
-      font-family:'Press Start 2P';
-      color:#00ffcc;
-      text-shadow:0 0 6px #00ffcc;
-    ">
-    ⚽ ${goles} | ❤️ ${vidas} | 🌍 ${nivel}
+      display:inline-block;background:rgba(0,0,0,.7);
+      padding:8px 12px;border:2px solid #00ffcc;
+      border-radius:10px;font-family:'Press Start 2P';
+      color:#00ffcc;text-shadow:0 0 6px #00ffcc;">
+      ⚽ ${goles} | ❤️ ${vidas} | 🌍 ${nivel}
     </div>`;
 }
 
@@ -210,9 +210,8 @@ function mostrarPregunta() {
     preguntaBox.classList.add("oculto");
     mostrandoPregunta = false;
 
-    if (r === p.respuesta) {
-      subirNivel();
-    } else {
+    if (r === p.respuesta) subirNivel();
+    else {
       vidas--;
       if (vidas <= 0) mostrarGameOver();
     }
@@ -223,9 +222,8 @@ function mostrarPregunta() {
 function subirNivel() {
   nivel++;
 
-  // ACELERACIÓN REAL
-  impresora.dy *= 1.35;   // más rápido sin error
-  jugador.speed += 0.5;   // mejora suave
+  impresora.dy *= 1.35;
+  jugador.speed += 0.5;
   cambiarCancha();
 
   if (nivel > 5) mostrarVictoria();
@@ -298,16 +296,10 @@ function crearBotonReinicio() {
 }
 
 // 📱 CONTROLES MÓVILES
-const btnUp = document.querySelector(".flecha.arriba");
-const btnDown = document.querySelector(".flecha.abajo");
-const btnLeft = document.querySelector(".flecha.izquierda");
-const btnRight = document.querySelector(".flecha.derecha");
-const btnShoot = document.querySelector(".boton-space");
-
-function moverArriba(){ if(juegoActivo&&!mostrandoPregunta) jugador.y-=jugador.speed; }
-function moverAbajo(){ if(juegoActivo&&!mostrandoPregunta) jugador.y+=jugador.speed; }
-function moverIzquierda(){ if(juegoActivo&&!mostrandoPregunta) jugador.x-=jugador.speed; }
-function moverDerecha(){ if(juegoActivo&&!mostrandoPregunta) jugador.x+=jugador.speed; }
+function moverArriba(){ if(juegoActivo&&!mostrandoPregunta) jugador.y=Math.max(0, jugador.y-jugador.speed); }
+function moverAbajo(){ if(juegoActivo&&!mostrandoPregunta) jugador.y=Math.min(canvas.height-jugador.height, jugador.y+jugador.speed); }
+function moverIzquierda(){ if(juegoActivo&&!mostrandoPregunta) jugador.x=Math.max(0, jugador.x-jugador.speed); }
+function moverDerecha(){ if(juegoActivo&&!mostrandoPregunta) jugador.x=Math.min(canvas.width-jugador.width, jugador.x+jugador.speed); }
 
 function disparar(){
   if(!balon.enMovimiento && juegoActivo && !mostrandoPregunta){
@@ -317,31 +309,23 @@ function disparar(){
   }
 }
 
-btnUp.addEventListener("touchstart", moverArriba);
-btnDown.addEventListener("touchstart", moverAbajo);
-btnLeft.addEventListener("touchstart", moverIzquierda);
-btnRight.addEventListener("touchstart", moverDerecha);
-btnShoot.addEventListener("touchstart", disparar);
-// 📱 CONTROLES MÓVILES — FIX DEFINITIVO
-document.addEventListener("DOMContentLoaded", () => {
-  const btnUp = document.querySelector(".flecha.arriba");
-  const btnDown = document.querySelector(".flecha.abajo");
-  const btnLeft = document.querySelector(".flecha.izquierda");
-  const btnRight = document.querySelector(".flecha.derecha");
-  const btnShoot = document.querySelector(".boton-space");
+// 🚀 Agregar controles móviles sin duplicar eventos
+const controles = {
+  ".flecha.arriba": moverArriba,
+  ".flecha.abajo": moverAbajo,
+  ".flecha.izquierda": moverIzquierda,
+  ".flecha.derecha": moverDerecha,
+  ".boton-space": disparar
+};
 
-  if (btnUp) btnUp.addEventListener("touchstart", (e) => { e.preventDefault(); moverArriba(); });
-  if (btnDown) btnDown.addEventListener("touchstart", (e) => { e.preventDefault(); moverAbajo(); });
-  if (btnLeft) btnLeft.addEventListener("touchstart", (e) => { e.preventDefault(); moverIzquierda(); });
-  if (btnRight) btnRight.addEventListener("touchstart", (e) => { e.preventDefault(); moverDerecha(); });
-  if (btnShoot) btnShoot.addEventListener("touchstart", (e) => { e.preventDefault(); disparar(); });
+for (const sel in controles) {
+  const btn = document.querySelector(sel);
+  if (!btn) continue;
 
-  // Para que también funcionen con click (PC)
-  if (btnUp) btnUp.addEventListener("mousedown", moverArriba);
-  if (btnDown) btnDown.addEventListener("mousedown", moverAbajo);
-  if (btnLeft) btnLeft.addEventListener("mousedown", moverIzquierda);
-  if (btnRight) btnRight.addEventListener("mousedown", moverDerecha);
-  if (btnShoot) btnShoot.addEventListener("mousedown", disparar);
-});
+  btn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    controles[sel]();
+  });
 
-
+  btn.addEventListener("mousedown", controles[sel]);
+}
