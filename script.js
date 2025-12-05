@@ -61,6 +61,13 @@ jugadorImg.src = "jugadorr.webp";
 
 const impresoraImg = new Image();
 impresoraImg.src = "impresoraa.webp";
+impresoraImg.onload = () => {
+  ajustarResolucion();
+};
+jugadorImg.onload = () => {
+  ajustarResolucion();
+};
+
 
 // ⚙️ VARIABLES DEL JUEGO
 let jugador = { x: 100, y: 200, width: 120, height: 120, speed: 8 };
@@ -342,4 +349,5 @@ for (const sel in controles) {
 
   btn.addEventListener("mousedown", controles[sel]);
 }
+
 
