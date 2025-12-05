@@ -4,20 +4,33 @@ const pantallaInicio = document.getElementById("pantalla-inicio");
 const pantallaJuego = document.getElementById("pantalla-juego");
 const canvas = document.getElementById("juego");
 const ctx = canvas.getContext("2d");
-
-// --- CANVAS RESPONSIVO REAL ---
 function ajustarResolucion() {
     const container = document.getElementById("canvas-container");
     const width = container.clientWidth;
 
-    // Mantener proporción
+    // Mantener proporción del canvas (900x500 original)
     canvas.width = width;
-    canvas.height = width * 0.55;
+    canvas.height = width * (500 / 900);
 
-    // Evitar que el jugador salga de la pantalla al ajustar
+    // Escala proporcional real según tamaño original 900px
+    const escala = canvas.width / 900;
+
+    // Escalar jugador
+    jugador.width = 120 * escala;
+    jugador.height = 120 * escala;
+
+    // Escalar impresora
+    impresora.width = 100 * escala;
+    impresora.height = 100 * escala;
+
+    // Balón
+    balon.radius = 15 * escala;
+
+    // Reubicar si algo quedó fuera
     jugador.x = Math.min(jugador.x, canvas.width - jugador.width);
     jugador.y = Math.min(jugador.y, canvas.height - jugador.height);
 }
+
 
 window.addEventListener("resize", ajustarResolucion);
 window.addEventListener("orientationchange", ajustarResolucion);
@@ -329,3 +342,4 @@ for (const sel in controles) {
 
   btn.addEventListener("mousedown", controles[sel]);
 }
+
