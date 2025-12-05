@@ -4,6 +4,7 @@ const pantallaInicio = document.getElementById("pantalla-inicio");
 const pantallaJuego = document.getElementById("pantalla-juego");
 const canvas = document.getElementById("juego");
 const ctx = canvas.getContext("2d");
+
 function ajustarResolucion() {
   const container = document.getElementById("canvas-container");
   const width = container.clientWidth;
@@ -21,7 +22,6 @@ function ajustarResolucion() {
 
   balon.radius = 15 * escala;
 
-  // ✅ POSICIÓN CORRECTA SIEMPRE VISIBLE (CLAVE)
   impresora.x = canvas.width - impresora.width - 10;
 
   if (impresora.y + impresora.height > canvas.height) {
@@ -30,8 +30,12 @@ function ajustarResolucion() {
 
   jugador.x = Math.min(jugador.x, canvas.width - jugador.width);
   jugador.y = Math.min(jugador.y, canvas.height - jugador.height);
-}
 
+  // ✅ FIX CRÍTICO PARA CELULAR
+  if (!impresora.dy || impresora.dy === 0) {
+    impresora.dy = 4;
+  }
+}
 
 window.addEventListener("resize", ajustarResolucion);
 window.addEventListener("orientationchange", ajustarResolucion);
@@ -46,13 +50,7 @@ const golSound = document.getElementById("gol-sound");
 const tiroSound = document.getElementById("tiro-sound");
 
 // 🎨 IMÁGENES DEL JUEGO
-const canchas = [
-  "canchaa.png",
-  "estadio2.png",
-  "estadio3.png",
-  "estadio4.png",
-  "estadio5.png",
-];
+const canchas = ["canchaa.png", "estadio2.png", "estadio3.png", "estadio4.png", "estadio5.png"];
 
 let fondo = new Image();
 fondo.src = canchas[0];
@@ -62,13 +60,8 @@ jugadorImg.src = "jugadorr.webp";
 
 const impresoraImg = new Image();
 impresoraImg.src = "impresoraa.webp";
-impresoraImg.onload = () => {
-  ajustarResolucion();
-};
-jugadorImg.onload = () => {
-  ajustarResolucion();
-};
 
+impresoraImg.onload = jugadorImg.onload = ajustarResolucion;
 
 // ⚙️ VARIABLES DEL JUEGO
 let jugador = { x: 100, y: 200, width: 120, height: 120, speed: 8 };
@@ -82,21 +75,7 @@ let juegoActivo = false;
 let mostrandoPregunta = false;
 let gameOver = false;
 
-// 🧠 PREGUNTAS
-const preguntas = [
-  { pregunta: "¿Cuál es el planeta más grande del sistema solar?", respuesta: "jupiter" },
-  { pregunta: "¿En qué continente está Egipto?", respuesta: "africa" },
-  { pregunta: "¿Cuál es el océano más grande?", respuesta: "pacifico" },
-  { pregunta: "¿Qué idioma se habla en Brasil?", respuesta: "portugues" },
-  { pregunta: "¿Quién pintó la Mona Lisa?", respuesta: "leonardo da vinci" },
-  { pregunta: "¿Cuál es el metal más ligero?", respuesta: "litio" },
-  { pregunta: "¿Cuántos lados tiene un hexágono?", respuesta: "6" },
-  { pregunta: "¿En qué país se encuentra la Torre Eiffel?", respuesta: "francia" },
-  { pregunta: "¿Cuál es el río más largo del mundo?", respuesta: "nilo" },
-  { pregunta: "¿Qué gas respiramos para vivir?", respuesta: "oxigeno" }
-];
-
-// ▶️ INICIAR EL JUEGO
+// ▶️ INICIAR JUEGO
 btnIniciar.addEventListener("click", () => {
   pantallaInicio.classList.add("oculto");
   pantallaJuego.classList.remove("oculto");
@@ -114,7 +93,7 @@ function iniciarJuego() {
   jugador.x = 100;
   jugador.y = 200;
 
-  impresora.y = 200;
+  impresora.y = 50;
   impresora.dy = 4;
 
   jugador.speed = 8;
@@ -125,30 +104,18 @@ function iniciarJuego() {
   loop();
 }
 
-// 🎮 CONTROLES DEL JUGADOR
+// 🎮 CONTROLES TECLADO
 document.addEventListener("keydown", (e) => {
   if (!juegoActivo || mostrandoPregunta || gameOver) return;
 
-  switch (e.key) {
-    case "ArrowUp":
-      jugador.y = Math.max(0, jugador.y - jugador.speed);
-      break;
-    case "ArrowDown":
-      jugador.y = Math.min(canvas.height - jugador.height, jugador.y + jugador.speed);
-      break;
-    case "ArrowLeft":
-      jugador.x = Math.max(0, jugador.x - jugador.speed);
-      break;
-    case "ArrowRight":
-      jugador.x = Math.min(canvas.width - jugador.width, jugador.x + jugador.speed);
-      break;
-    case " ":
-      disparar();
-      break;
-  }
+  if (e.key === "ArrowUp") jugador.y -= jugador.speed;
+  if (e.key === "ArrowDown") jugador.y += jugador.speed;
+  if (e.key === "ArrowLeft") jugador.x -= jugador.speed;
+  if (e.key === "ArrowRight") jugador.x += jugador.speed;
+  if (e.key === " ") disparar();
 });
 
-// 🔁 LOOP PRINCIPAL
+// 🔁 LOOP
 function loop() {
   if (!juegoActivo) return;
   actualizar();
@@ -156,7 +123,7 @@ function loop() {
   if (!gameOver) requestAnimationFrame(loop);
 }
 
-// ⚽ LÓGICA DEL JUEGO
+// ⚽ LÓGICA
 function actualizar() {
   if (!balon.enMovimiento) {
     balon.x = jugador.x + jugador.width - 40;
@@ -170,7 +137,6 @@ function actualizar() {
     impresora.dy *= -1;
   }
 
-  // Gol
   if (
     balon.x + balon.radius >= impresora.x &&
     balon.y > impresora.y &&
@@ -179,29 +145,19 @@ function actualizar() {
     golSound.play();
     balon.enMovimiento = false;
     goles++;
-
     if (goles % 3 === 0) setTimeout(mostrarPregunta, 400);
   }
 
-  // Balón fuera
   if (balon.x > canvas.width) {
     balon.enMovimiento = false;
     vidas--;
     if (vidas <= 0) mostrarGameOver();
   }
 
-  // Marcador
-  puntajeDiv.innerHTML = `
-    <div style="
-      display:inline-block;background:rgba(0,0,0,.7);
-      padding:8px 12px;border:2px solid #00ffcc;
-      border-radius:10px;font-family:'Press Start 2P';
-      color:#00ffcc;text-shadow:0 0 6px #00ffcc;">
-      ⚽ ${goles} | ❤️ ${vidas} | 🌍 ${nivel}
-    </div>`;
+  puntajeDiv.innerHTML = `⚽ ${goles} | ❤️ ${vidas} | 🌍 ${nivel}`;
 }
 
-// 🎨 DIBUJAR
+// 🎨 DIBUJO
 function dibujar() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(fondo, 0, 0, canvas.width, canvas.height);
@@ -212,125 +168,57 @@ function dibujar() {
   ctx.arc(balon.x, balon.y, balon.radius, 0, Math.PI * 2);
   ctx.fillStyle = "white";
   ctx.fill();
-  ctx.stroke();
 }
 
 // ❓ PREGUNTAS
+const preguntas = [
+  { pregunta: "¿Cuál es el planeta más grande?", respuesta: "jupiter" },
+  { pregunta: "¿En qué continente está Egipto?", respuesta: "africa" },
+  { pregunta: "¿Qué océano es el más grande?", respuesta: "pacifico" }
+];
+
 function mostrarPregunta() {
   mostrandoPregunta = true;
-
   const p = preguntas[Math.floor(Math.random() * preguntas.length)];
   preguntaText.textContent = p.pregunta;
-
   preguntaBox.classList.remove("oculto");
-  respuestaInput.focus();
 
   responderBtn.onclick = () => {
     const r = respuestaInput.value.toLowerCase();
-    respuestaInput.value = "";
     preguntaBox.classList.add("oculto");
     mostrandoPregunta = false;
-
     if (r === p.respuesta) subirNivel();
-    else {
-      vidas--;
-      if (vidas <= 0) mostrarGameOver();
-    }
+    else vidas--;
   };
 }
 
-// ⬆️ SUBIR NIVEL
+// ⬆️ NIVELES
 function subirNivel() {
   nivel++;
-
-  impresora.dy *= 1.35;
-  jugador.speed += 0.5;
-  cambiarCancha();
-
-  if (nivel > 5) mostrarVictoria();
-}
-
-// 🏟️ CAMBIAR CANCHA
-function cambiarCancha() {
-  fondo.src = canchas[(nivel - 1) % canchas.length];
+  impresora.dy *= 1.3;
 }
 
 // 💀 GAME OVER
 function mostrarGameOver() {
   juegoActivo = false;
   gameOver = true;
-
-  setTimeout(() => {
-    ctx.fillStyle = "rgba(0,0,0,0.85)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle="#ff4444";
-    ctx.font="bold 48px 'Press Start 2P'";
-    ctx.textAlign="center";
-    ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 30);
-
-    crearBotonReinicio();
-  },300);
+  setTimeout(() => location.reload(), 2500);
 }
 
-// 🏆 VICTORIA
-function mostrarVictoria() {
-  juegoActivo = false;
-  gameOver = true;
-
-  setTimeout(() => {
-    ctx.fillStyle = "rgba(0,0,0,0.85)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle="#00ffcc";
-    ctx.textAlign="center";
-
-    ctx.font="bold 42px 'Press Start 2P'";
-    ctx.fillText("¡GANASTE!", canvas.width/2, canvas.height/2 - 40);
-
-    ctx.font="bold 20px 'Press Start 2P'";
-    ctx.fillText("Reparaste la impresora", canvas.width/2, canvas.height/2 + 15);
-
-    crearBotonReinicio();
-  },300);
-}
-
-// 🔁 BOTÓN DE REINICIO
-function crearBotonReinicio() {
-  const boton = document.createElement("button");
-  boton.textContent = "🔁 Reiniciar";
-  Object.assign(boton.style, {
-    position:"absolute",
-    top:"70%",
-    left:"50%",
-    transform:"translate(-50%,-50%)",
-    padding:"15px 30px",
-    background:"#00ffcc",
-    border:"none",
-    borderRadius:"12px",
-    fontFamily:"'Press Start 2P'",
-    cursor:"pointer",
-    zIndex:"999"
-  });
-  pantallaJuego.appendChild(boton);
-  boton.onclick = () => location.reload();
-}
-
-// 📱 CONTROLES MÓVILES
-function moverArriba(){ if(juegoActivo&&!mostrandoPregunta) jugador.y=Math.max(0, jugador.y-jugador.speed); }
-function moverAbajo(){ if(juegoActivo&&!mostrandoPregunta) jugador.y=Math.min(canvas.height-jugador.height, jugador.y+jugador.speed); }
-function moverIzquierda(){ if(juegoActivo&&!mostrandoPregunta) jugador.x=Math.max(0, jugador.x-jugador.speed); }
-function moverDerecha(){ if(juegoActivo&&!mostrandoPregunta) jugador.x=Math.min(canvas.width-jugador.width, jugador.x+jugador.speed); }
+// 📱 CONTROLES MÓVIL
+function moverArriba(){ jugador.y -= jugador.speed; }
+function moverAbajo(){ jugador.y += jugador.speed; }
+function moverIzquierda(){ jugador.x -= jugador.speed; }
+function moverDerecha(){ jugador.x += jugador.speed; }
 
 function disparar(){
-  if(!balon.enMovimiento && juegoActivo && !mostrandoPregunta){
+  if(!balon.enMovimiento){
     tiroSound.play();
     balon.enMovimiento = true;
-    balon.dx = 7 + (nivel - 1) * 2;
+    balon.dx = 8;
   }
 }
 
-// 🚀 Agregar controles móviles sin duplicar eventos
 const controles = {
   ".flecha.arriba": moverArriba,
   ".flecha.abajo": moverAbajo,
@@ -350,6 +238,3 @@ for (const sel in controles) {
 
   btn.addEventListener("mousedown", controles[sel]);
 }
-
-
-
