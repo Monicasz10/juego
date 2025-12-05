@@ -5,30 +5,31 @@ const pantallaJuego = document.getElementById("pantalla-juego");
 const canvas = document.getElementById("juego");
 const ctx = canvas.getContext("2d");
 function ajustarResolucion() {
-    const container = document.getElementById("canvas-container");
-    const width = container.clientWidth;
+  const container = document.getElementById("canvas-container");
+  const width = container.clientWidth;
 
-    // Mantener proporción del canvas (900x500 original)
-    canvas.width = width;
-    canvas.height = width * (500 / 900);
+  canvas.width = width;
+  canvas.height = width * (500 / 900);
 
-    // Escala proporcional real según tamaño original 900px
-    const escala = canvas.width / 900;
+  const escala = canvas.width / 900;
 
-    // Escalar jugador
-    jugador.width = 120 * escala;
-    jugador.height = 120 * escala;
+  jugador.width = 120 * escala;
+  jugador.height = 120 * escala;
 
-    // Escalar impresora
-    impresora.width = 100 * escala;
-    impresora.height = 100 * escala;
+  impresora.width = 100 * escala;
+  impresora.height = 100 * escala;
 
-    // Balón
-    balon.radius = 15 * escala;
+  balon.radius = 15 * escala;
 
-    // Reubicar si algo quedó fuera
-    jugador.x = Math.min(jugador.x, canvas.width - jugador.width);
-    jugador.y = Math.min(jugador.y, canvas.height - jugador.height);
+  // ✅ POSICIÓN CORRECTA SIEMPRE VISIBLE (CLAVE)
+  impresora.x = canvas.width - impresora.width - 10;
+
+  if (impresora.y + impresora.height > canvas.height) {
+    impresora.y = canvas.height - impresora.height;
+  }
+
+  jugador.x = Math.min(jugador.x, canvas.width - jugador.width);
+  jugador.y = Math.min(jugador.y, canvas.height - jugador.height);
 }
 
 
@@ -71,7 +72,7 @@ jugadorImg.onload = () => {
 
 // ⚙️ VARIABLES DEL JUEGO
 let jugador = { x: 100, y: 200, width: 120, height: 120, speed: 8 };
-let impresora = { x: 700, y: 200, width: 100, height: 100, dy: 4 };
+let impresora = { x: 0, y: 200, width: 100, height: 100, dy: 4 };
 let balon = { x: 180, y: 230, radius: 15, dx: 0, enMovimiento: false };
 
 let goles = 0;
@@ -349,5 +350,6 @@ for (const sel in controles) {
 
   btn.addEventListener("mousedown", controles[sel]);
 }
+
 
 
