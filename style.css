@@ -104,40 +104,76 @@ canvas {
 
 /* CONTROLES */
 #controles-juego {
-  position: absolute;
-  bottom: 25px;
+  position: fixed;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 70px;
+  gap: 50px;
   z-index: 1000;
 }
 
-.flecha, .boton-space {
-  user-select: none;
-}
-
-.control-flechas .flecha {
-  font-size: 22px;
-  padding: 10px;
-  border: 2px solid #00ffff;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.3);
+.control-flechas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .fila {
   display: flex;
-  gap: 20px;
+  gap: 15px;
+}
+
+.flecha {
+  width: 55px;
+  height: 55px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #00ffff;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #00ffff;
+  user-select: none;
 }
 
 .boton-space {
-  padding: 15px 40px;
+  width: 130px;
+  height: 60px;
   font-size: 18px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 2px solid #00ffff;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.5);
+  color: #00ffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
+
+/* 📱 AJUSTE FINO PARA MÓVIL */
+@media (max-width: 600px) {
+  #controles-juego {
+    bottom: 10px;
+    gap: 30px;
+  }
+
+  .flecha {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .boton-space {
+    width: 140px;
+    height: 65px;
+    font-size: 20px;
+  }
+}
+
 
 /* 📱 MOBILE */
 @media (max-width: 600px) {
@@ -171,3 +207,4 @@ canvas {
     padding: 8px;
   }
 }
+
